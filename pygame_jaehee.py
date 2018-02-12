@@ -20,60 +20,48 @@ class User_car(pygame.sprite.Sprite):
 class Other_cars(pygame.sprite.Sprite):
     def __init__(self, speed):
         super(Other_cars,self).__init__()
-        self.x = random.randrange(215, 680, 100)
+        self.x = random.randrange(100, 700, 30)
         self.y = 100
         self.speed = speed
 
     def update (self, screen_x, screen_y):
-        self.x += self.speed
         self.y += self.speed
         if self.x > screen_x:
-            self.x = 0
+            self.x = 0     
         if self.y > screen_y:
             self.y = 0
     
-    def display(self, screen):
-        # Police image
-        police  = pygame.image.load("image/police1.png").convert_alpha()
+    def display_car(self, screen):
+        police = pygame.image.load("image/police1.png").convert_alpha()
         police = pygame.transform.scale(police, (160,170))
-        # # Ambulance image
-        # ambulance = pygame.image.load("image/ambulance1.png").convert_alpha()
-        # ambulance = pygame.transform.scale(ambulance, (160,170))
-        
         screen.blit(police, (self.x, self.y))
-    
-    #     self.rect = self.image.get_rect()
-
+        
 def main():
-    # declare the size of the canvas
+    # Declare the size of the canvas
     screen_x = 1000
     screen_y = 600
 
+    # Game Initialization
     pygame.init()
     screen = pygame.display.set_mode((screen_x,screen_y))
-    pygame.display.set_caption('My first Game')
+    pygame.display.set_caption('On my way')
 
     # Background image
     background = pygame.image.load('image/background-1.png')
     background = pygame.transform.scale(background, (screen_x,screen_y))
 
-    # othercar_list = [
-    #     police, 
-    #     ambulance
-    # ]
-
     car = User_car(screen)
     other_car = Other_cars(screen)
+
+    car_list = [Other_cars(10), Other_cars(12), Other_cars(9)]
 
     stop_game = False
     while not stop_game:
         for event in pygame.event.get():
             if event.type == QUIT:
-                # pygame.quit()
-                # sys.exit()
                 stop_game = True
 
-            #User_car Key Function 
+            # User_car Logic
             if event.type == KEYDOWN: 
                 if event.key == K_RIGHT:
                     if car.user_carx <= 680:
@@ -95,13 +83,18 @@ def main():
                         car.user_cary += 50
                     else:
                         car.user_cary += 0
-            # Other cars logic
-            # for othercar in othercar_list:
-            #     othercar.display(screen)
+
+        # Other_cars Logic
+        for a in car_list:
+            a.update(screen_x, screen_y)
+        
+        for a in car_list:
+            a.display_car(screen)
+
+        pygame.display.update()
         
         screen.blit(background,(0,0))
         screen.blit(car.image, (car.user_carx, car.user_cary))
-        pygame.display.update()
         mainClock.tick(clock)
     
     pygame.quit()
